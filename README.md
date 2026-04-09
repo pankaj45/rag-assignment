@@ -94,6 +94,8 @@ file: <empty XLSX questionnaire>
 
 Returns the filled XLSX file as a download. The `X-Questionnaire-Run-Id` response header contains the run ID for status tracking.
 
+> **Note:** If the LLM cannot find a relevant answer in the ingested documents — or the generated response does not match a required dropdown option — the cell is left blank. The original questionnaire cell is never overwritten with placeholder text such as "N/A" or "INSUFFICIENT_CONTEXT".
+
 ```bash
 curl -X POST "http://localhost:8080/api/questionnaire/fill?customer_id=acme" \
      -F "file=@questionnaire-empty.xlsx" \
