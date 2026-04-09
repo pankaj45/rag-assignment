@@ -19,7 +19,7 @@ public class OpenAiProperties {
     @Getter
     @Setter
     public static class Embedding {
-        private String model = "text-embedding-3-small";
+        private String model = "text-embedding-ada-002";
     }
 
     @Getter

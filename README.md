@@ -120,16 +120,16 @@ Run status fields: `PENDING` → `IN_PROGRESS` → `COMPLETED` / `FAILED`.
 
 All settings are in `src/main/resources/application.properties`.
 
-| Property | Default                | Description |
-|---|------------------------|---|
-| `OPENAI_API_KEY` | *(required env var)*   | OpenAI API key |
-| `openai.embedding.model` | `text-embedding-3-small` | Embedding model |
-| `openai.completion.model` | `gpt-4o-mini`          | Completion model |
-| `openai.completion.max-tokens` | `1024`                 | Max tokens per answer |
-| `rag.chunker.chunk-size-tokens` | `500`                  | Chunk size for document splitting |
-| `rag.chunker.overlap-tokens` | `50`                   | Overlap between chunks |
-| `rag.retrieval.top-k` | `5`                    | Number of chunks retrieved per question |
-| `rag.retrieval.min-score` | `0.75`                 | Minimum cosine similarity threshold |
+| Property | Default | Description |
+|---|----|---|
+| `OPENAI_API_KEY` | *(required env var)* | OpenAI API key |
+| `openai.embedding.model` | `text-embedding-ada-002` | Embedding model |
+| `openai.completion.model` | `gpt-4o-mini` | Completion model |
+| `openai.completion.max-tokens` | `1024` | Max tokens per answer |
+| `rag.chunker.chunk-size-tokens` | `500` | Chunk size for document splitting |
+| `rag.chunker.overlap-tokens` | `50` | Overlap between chunks |
+| `rag.retrieval.top-k` | `5` | Number of chunks retrieved per question |
+| `rag.retrieval.min-score` | `0.75` | Minimum cosine similarity threshold |
 
 ---
 
