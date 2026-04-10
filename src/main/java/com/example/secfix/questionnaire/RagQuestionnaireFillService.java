@@ -126,7 +126,12 @@ public class RagQuestionnaireFillService implements QuestionnaireFillService {
             for (Question question : questions) {
                 Sheet sheet = workbook.getSheetAt(question.sheetIndex());
                 Row row = sheet.getRow(question.rowIndex());
-                if (row == null) row = sheet.createRow(question.rowIndex());
+                if (row == null) {
+                    log.warn("Row {} missing on sheet '{}' — skipping question: {}",
+                            question.rowIndex(), question.sheetName(),
+                            question.questionText().substring(0, Math.min(80, question.questionText().length())));
+                    continue;
+                }
 
                 QuestionnaireItem item = persistItem(run, question, customerId);
 
@@ -157,9 +162,15 @@ public class RagQuestionnaireFillService implements QuestionnaireFillService {
                         result = resolveAnswer(question.questionText(), answerCol, customerId, selectedResponse);
                     }
 
-                    Cell cell = row.getCell(answerCol.columnIndex(), Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
-                    if (cell == null) cell = row.createCell(answerCol.columnIndex());
-                    cell.setCellValue(renderedCellValue(result, answerCol));
+                    if (result.status() == AnswerStatus.GENERATED) {
+                        Cell cell = row.getCell(answerCol.columnIndex());
+                        if (cell != null) {
+                            cell.setCellValue(result.answerText());
+                        } else {
+                            log.warn("Cell at row {} col {} missing on sheet '{}' — skipping write",
+                                    question.rowIndex(), answerCol.columnIndex(), question.sheetName());
+                        }
+                    }
 
                     GeneratedAnswer generated = persistGeneratedAnswer(run, item, field, result, customerId);
                     persistEvidence(generated, result.evidenceChunks(), customerId);
@@ -329,13 +340,6 @@ public class RagQuestionnaireFillService implements QuestionnaireFillService {
             case INSUFFICIENT_CONTEXT -> run.setInsufficientContextFields(run.getInsufficientContextFields() + 1);
             case CONSTRAINT_VIOLATION, ERROR -> run.setFailedFields(run.getFailedFields() + 1);
         }
-    }
-
-    private String renderedCellValue(AnswerGenerationResult result, AnswerColumnSchema answerCol) {
-        if (result.status() != AnswerStatus.GENERATED) {
-            return "";
-        }
-        return result.answerText();
     }
 
     private String normalizeAllowedOption(String answer, List<String> options) {
